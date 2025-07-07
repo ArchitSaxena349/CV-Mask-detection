@@ -1,6 +1,6 @@
 import os
 import cv2
-from keras_preprocessing.image import img_to_array
+from tensorflow.keras.utils import img_to_array
 
 
 def preprocess_face_frame(face_frame):

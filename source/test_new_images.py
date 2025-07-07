@@ -4,7 +4,7 @@ import imutils
 from tensorflow import keras
 import cv2
 import numpy as np
-from tensorflow.python.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 from source.utils import load_cascade_detector, preprocess_face_frame, decode_prediction, write_bb
 

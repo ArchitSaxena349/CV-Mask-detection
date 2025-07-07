@@ -1,5 +1,6 @@
 from base64 import b64encode
 from io import BytesIO
+import time
 
 import cv2
 import numpy as np
@@ -12,8 +13,8 @@ from wtforms import FileField, SubmitField
 from app.main import main_bp
 from app.main.camera import Camera
 
-from source.test_new_images import detect_mask_in_image
-from source.video_detector import detect_mask_in_frame
+from source.simple_mask_detector import detect_mask_in_image
+from source.simple_video_detector import detect_mask_in_frame
 
 
 @main_bp.route("/")
@@ -21,21 +22,29 @@ def home_page():
     return render_template("home_page.html")
 
 
-def gen(camera):
-
+def gen():
+    video = cv2.VideoCapture(0)
+    
     while True:
-        frame = camera.get_frame()
-        frame_processed = detect_mask_in_frame(frame)
-        frame_processed = cv2.imencode('.jpg', frame_processed)[1].tobytes()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame_processed + b'\r\n')
+        ret, frame = video.read()
+        if not ret:
+            break
+            
+        # Process frame
+        frame = detect_mask_in_frame(frame)
+        
+        # Convert to JPEG
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        if ret:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
+    
+    video.release()
 
 
 @main_bp.route('/video_feed')
 def video_feed():
-    return Response(gen(
-        Camera()
-    ),
+    return Response(gen(),
         mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
