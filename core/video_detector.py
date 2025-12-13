@@ -4,11 +4,24 @@ import cv2
 import imutils
 from imutils.video import VideoStream
 from tensorflow import keras
-from tensorflow.python.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
-from source.utils import preprocess_face_frame, decode_prediction, write_bb, load_cascade_detector
+from core.utils import preprocess_face_frame, decode_prediction, write_bb, load_cascade_detector
+from core.performance import monitor_performance
+from core.logger import get_logger
 
-model = keras.models.load_model('models/mask_mobilenet.h5')
+logger = get_logger(__name__)
+
+# Try to load the model, fallback to None if it fails
+try:
+    from config import Config
+    model_path = Config.MODEL_PATH
+    model = keras.models.load_model(str(model_path))
+    print("✅ Model loaded successfully!")
+except Exception as e:
+    print(f"⚠️ Could not load model: {e}")
+    model = None
+
 face_detector = load_cascade_detector()
 
 
@@ -33,6 +46,7 @@ def video_mask_detector():
     video.stop()
 
 
+@monitor_performance("video_frame_processing")
 def detect_mask_in_frame(frame):
     frame = imutils.resize(frame, width=500)
 
@@ -60,13 +74,20 @@ def detect_mask_in_frame(frame):
         faces_dict["faces_list"].append(face_frame_prepared)
         faces_dict["faces_rect"].append(rect)
 
-    if faces_dict["faces_list"]:
+    if faces_dict["faces_list"] and model is not None:
         faces_preprocessed = preprocess_input(np.array(faces_dict["faces_list"]))
         preds = model.predict(faces_preprocessed)
 
         for i, pred in enumerate(preds):
             mask_or_not, confidence = decode_prediction(pred)
             write_bb(mask_or_not, confidence, faces_dict["faces_rect"][i], frame)
+    elif faces_dict["faces_list"]:
+        # Fallback: just draw face detection without mask classification
+        for rect in faces_dict["faces_rect"]:
+            (x, y, w, h) = rect
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.putText(frame, 'Face Detected', (x, y - 10), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 0, 0), 2)
 
     return frame
 

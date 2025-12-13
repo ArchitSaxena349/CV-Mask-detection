@@ -1,25 +1,35 @@
+import os
 from flask import Flask
+from config import config
+from core.logger import setup_logging
+from core.validators import validate_config
 
-from app.errors.routes import error_404, error_403, error_401, error_500
-from flask import render_template
-
-
-def create_app():
+def create_app(config_name=None):
+    """Application factory pattern"""
+    if config_name is None:
+        config_name = os.environ.get('FLASK_CONFIG', 'default')
+    
     app = Flask(__name__)
-
-    # Retrieve configuration information
-    app.config['SECRET_KEY'] = 'your-secret-key-here'  # Add a secret key for form protection
-
-    # Initialization of blueprints
+    app.config.from_object(config[config_name])
+    
+    # Validate configuration
+    try:
+        validate_config(app.config)
+    except Exception as e:
+        app.logger.warning(f"Configuration validation warning: {e}")
+    
+    # Setup logging
+    setup_logging(app)
+    
+    # Register blueprints
     from app.main import main_bp
-
-    # Error handlers
-    app.register_error_handler(404, error_404)
-    app.register_error_handler(403, error_403)
-    app.register_error_handler(401, error_401)
-    app.register_error_handler(500, error_500)
-
+    from app.errors import errors_bp
+    from app.api import api_bp
+    
     app.register_blueprint(main_bp)
+    app.register_blueprint(errors_bp)
+    app.register_blueprint(api_bp)
+    
     return app
 
 
