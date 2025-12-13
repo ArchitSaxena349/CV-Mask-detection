@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Production server script using Waitress (Windows compatible)
+Production server script - Render compatible with full features
 """
 import os
 import sys
@@ -12,19 +12,20 @@ def main():
     # Get configuration
     config_name = os.environ.get('FLASK_CONFIG', 'production')
     
-    # Create app
+    # Create app with full features
     app = create_app(config_name)
     
-    # Server configuration
+    # Server configuration for Render
     host = os.environ.get('HOST', '0.0.0.0')
-    port = int(os.environ.get('PORT', 8000))
+    port = int(os.environ.get('PORT', 10000))  # Render default
     threads = int(os.environ.get('THREADS', 4))
     
-    print(f"🎭 Starting Mask Detection Production Server...")
+    print(f"🎭 Starting Mask Detection Production Server on Render...")
     print(f"📍 Configuration: {config_name}")
     print(f"🌐 Server: http://{host}:{port}")
     print(f"🧵 Threads: {threads}")
-    print(f"📱 Use Ctrl+C to stop the server")
+    print(f"🤖 ML Model: Loading TensorFlow model...")
+    print(f"📱 Full features available!")
     
     try:
         serve(
@@ -34,7 +35,11 @@ def main():
             threads=threads,
             connection_limit=1000,
             cleanup_interval=30,
-            channel_timeout=120
+            channel_timeout=120,
+            # Render-specific optimizations
+            max_request_body_size=50 * 1024 * 1024,  # 50MB for image uploads
+            expose_tracebacks=False,  # Security
+            ident='MaskDetectionSystem/1.0'
         )
     except KeyboardInterrupt:
         print("\n👋 Server stopped by user")

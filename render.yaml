@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: mask-detection-system
+    env: python
+    plan: starter  # Free tier available
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements-render.txt
+    startCommand: python serve.py
+    envVars:
+      - key: FLASK_CONFIG
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: THREADS
+        value: 4
+      - key: SECRET_KEY
+        generateValue: true
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    branch: main
+    rootDir: .
+    
+  # Optional: Static file service for better performance
+  - type: static
+    name: mask-detection-static
+    staticPublishPath: ./app/static
+    buildCommand: echo "Static files ready"
+    routes:
+      - type: rewrite
+        source: /static/*
+        destination: /static/:splat

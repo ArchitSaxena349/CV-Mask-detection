@@ -1,4 +1,4 @@
-# Full-featured requirements (Render/Local deployment)
+# Full-featured requirements for Render deployment
 Flask==3.1.1
 Flask-WTF==1.2.2
 WTForms==3.2.1

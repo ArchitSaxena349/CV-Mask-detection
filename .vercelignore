@@ -1,0 +1,52 @@
+# Vercel ignore file
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Large files that shouldn't be deployed
+models/mask_mobilenet.h5
+*.h5
+*.pkl
+*.joblib
+
+# Development files
+.git/
+.github/
+tests/
+logs/
+*.log
+
+# Windows files
+*.bat
+*.ps1
+Makefile.windows
+windows-service.py
+WINDOWS-SETUP.md
+
+# Docker files
+Dockerfile
+docker-compose.yml
+nginx.conf
+
+# Development requirements
+requirements-dev.txt
