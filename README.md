@@ -115,13 +115,39 @@ export SECRET_KEY=your-secret-key
 ## 🚀 Deployment
 
 ### Production Deployment
-```bash
-# Using Gunicorn
-gunicorn -w 4 -b 0.0.0.0:8000 wsgi:app
 
-# Using Docker (create Dockerfile)
+#### Linux/Mac
+```bash
+# Using Gunicorn (Linux/Mac only)
+gunicorn -w 4 -b 0.0.0.0:8000 wsgi:app
+```
+
+#### Windows
+```bash
+# Using Waitress (Windows compatible)
+python serve.py
+
+# Or use batch file
+run-prod.bat
+
+# Or use PowerShell script
+.\deploy-windows.ps1 -Action start
+```
+
+#### Docker (All platforms)
+```bash
 docker build -t mask-detector .
 docker run -p 8000:8000 mask-detector
+```
+
+#### Windows Service
+```bash
+# Install as Windows service
+.\deploy-windows.ps1 -Action service
+
+# Start/stop service
+net start MaskDetectionService
+net stop MaskDetectionService
 ```
 
 ### Environment Variables

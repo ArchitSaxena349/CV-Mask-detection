@@ -1,0 +1,56 @@
+# Windows-compatible Makefile
+.PHONY: help install install-dev run test clean lint format
+
+help:  ## Show this help message
+	@echo Available commands:
+	@echo   install      - Install production dependencies
+	@echo   install-dev  - Install development dependencies  
+	@echo   run          - Run the development server
+	@echo   run-prod     - Run with production configuration
+	@echo   serve        - Run production server with Waitress
+	@echo   test         - Run tests
+	@echo   test-cov     - Run tests with coverage
+	@echo   clean        - Clean up cache files
+	@echo   setup        - Initial project setup
+
+install:  ## Install production dependencies
+	pip install -r requirements.txt
+
+install-dev:  ## Install development dependencies
+	pip install -r requirements-dev.txt
+
+run:  ## Run the development server
+	python run.py
+
+run-prod:  ## Run with production configuration
+	set FLASK_CONFIG=production && python run.py
+
+serve:  ## Run production server with Waitress
+	python serve.py
+
+test:  ## Run tests
+	pytest
+
+test-cov:  ## Run tests with coverage
+	pytest --cov=app --cov=core --cov-report=html
+
+clean:  ## Clean up cache files
+	for /d /r . %%d in (__pycache__) do @if exist "%%d" rd /s /q "%%d"
+	del /s /q *.pyc 2>nul
+	del /s /q *.pyo 2>nul
+	del /s /q *.pyd 2>nul
+	del /s /q .coverage 2>nul
+
+setup:  ## Initial project setup
+	python -m venv .venv
+	@echo Virtual environment created. Activate it with:
+	@echo   .venv\Scripts\activate
+
+docker-build:  ## Build Docker image
+	docker build -t mask-detector:latest .
+
+docker-run:  ## Run Docker container
+	docker run -p 8000:8000 --name mask-detector mask-detector:latest
+
+validate-config:  ## Validate configuration
+	python -c "from core.validators import validate_config; from config import config; validate_config(config['development'])"
