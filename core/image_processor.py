@@ -5,22 +5,37 @@ from tensorflow import keras
 import cv2
 import numpy as np
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.layers import DepthwiseConv2D as KDepthwiseConv2D
 
 from core.utils import load_cascade_detector, preprocess_face_frame, decode_prediction, write_bb
 
 POSSIBLE_EXT = [".png", ".jpg", ".jpeg"]
 
+
+class CompatibleDepthwiseConv2D(KDepthwiseConv2D):
+    """DepthwiseConv2D that ignores unsupported 'groups' in older saved models."""
+
+    @classmethod
+    def from_config(cls, config):
+        config.pop("groups", None)
+        return super().from_config(config)
+
+
 # Try to load the model, fallback to None if it fails
 try:
     from config import Config
     model_path = Config.MODEL_PATH
-    
+
     # Handle TensorFlow version compatibility
     import tensorflow as tf
     print(f"🔧 TensorFlow version: {tf.__version__}")
-    
+
     # Load model with compatibility settings
-    model = keras.models.load_model(str(model_path), compile=False)
+    model = keras.models.load_model(
+        str(model_path),
+        compile=False,
+        custom_objects={"DepthwiseConv2D": CompatibleDepthwiseConv2D},
+    )
     print("✅ Model loaded successfully!")
 except Exception as e:
     print(f"⚠️ Could not load model: {e}")

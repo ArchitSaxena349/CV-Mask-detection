@@ -5,6 +5,7 @@ import imutils
 from imutils.video import VideoStream
 from tensorflow import keras
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.layers import DepthwiseConv2D as KDepthwiseConv2D
 
 from core.utils import preprocess_face_frame, decode_prediction, write_bb, load_cascade_detector
 from core.performance import monitor_performance
@@ -12,17 +13,29 @@ from core.logger import get_logger
 
 logger = get_logger(__name__)
 
+# Custom DepthwiseConv2D that ignores unsupported 'groups' argument in older models
+class CompatibleDepthwiseConv2D(KDepthwiseConv2D):
+    @classmethod
+    def from_config(cls, config):
+        config.pop("groups", None)
+        return super().from_config(config)
+
+
 # Try to load the model, fallback to None if it fails
 try:
     from config import Config
     model_path = Config.MODEL_PATH
-    
+
     # Handle TensorFlow version compatibility
     import tensorflow as tf
     print(f"🔧 TensorFlow version: {tf.__version__}")
-    
+
     # Load model with compatibility settings
-    model = keras.models.load_model(str(model_path), compile=False)
+    model = keras.models.load_model(
+        str(model_path),
+        compile=False,
+        custom_objects={"DepthwiseConv2D": CompatibleDepthwiseConv2D},
+    )
     print("✅ Model loaded successfully!")
 except Exception as e:
     print(f"⚠️ Could not load model: {e}")
