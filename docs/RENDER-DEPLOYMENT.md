@@ -67,10 +67,10 @@ services:
 ### `requirements-render.txt` (Full Features)
 ```txt
 Flask==3.1.1
-tensorflow-cpu==2.15.0
-Keras==2.15.0
-opencv-contrib-python-headless==4.8.1.78
-# ... all dependencies included
+tensorflow-cpu>=2.16.0,<2.21.0
+opencv-contrib-python-headless==4.10.0.84
+numpy>=1.24.0,<2.0.0
+# ... all dependencies included with version ranges for compatibility
 ```
 
 ## 🌟 Full Features Available

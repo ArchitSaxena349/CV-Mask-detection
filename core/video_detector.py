@@ -16,10 +16,17 @@ logger = get_logger(__name__)
 try:
     from config import Config
     model_path = Config.MODEL_PATH
-    model = keras.models.load_model(str(model_path))
+    
+    # Handle TensorFlow version compatibility
+    import tensorflow as tf
+    print(f"🔧 TensorFlow version: {tf.__version__}")
+    
+    # Load model with compatibility settings
+    model = keras.models.load_model(str(model_path), compile=False)
     print("✅ Model loaded successfully!")
 except Exception as e:
     print(f"⚠️ Could not load model: {e}")
+    print("🔄 Falling back to face detection only")
     model = None
 
 face_detector = load_cascade_detector()

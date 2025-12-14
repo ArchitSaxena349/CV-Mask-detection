@@ -127,11 +127,11 @@ gunicorn -w 4 -b 0.0.0.0:8000 wsgi:app
 # Using Waitress (Windows compatible)
 python serve.py
 
-# Or use batch file
-run-prod.bat
+# Or use batch file (from project root)
+scripts\run-prod.bat
 
-# Or use PowerShell script
-.\deploy-windows.ps1 -Action start
+# Or use PowerShell script (from project root)
+.\scripts\deploy-windows.ps1 -Action start
 ```
 
 #### Docker (All platforms)
@@ -143,7 +143,7 @@ docker run -p 8000:8000 mask-detector
 #### Windows Service
 ```bash
 # Install as Windows service
-.\deploy-windows.ps1 -Action service
+.\scripts\deploy-windows.ps1 -Action service
 
 # Start/stop service
 net start MaskDetectionService

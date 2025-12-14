@@ -3,8 +3,8 @@ API routes for health checks and monitoring
 """
 import psutil
 import time
-from datetime import datetime
-from flask import jsonify, current_app
+from datetime import datetime, timezone
+from flask import jsonify, current_app, Response
 from app.api import api_bp
 from core.logger import get_logger
 
@@ -15,7 +15,7 @@ def health_check():
     """Basic health check endpoint"""
     return jsonify({
         'status': 'healthy',
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'version': current_app.config.get('VERSION', '1.0.0'),
         'service': 'mask-detection-system'
     })
@@ -35,7 +35,7 @@ def detailed_health_check():
         
         return jsonify({
             'status': 'healthy',
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'version': current_app.config.get('VERSION', '1.0.0'),
             'service': 'mask-detection-system',
             'system': {
@@ -60,7 +60,7 @@ def detailed_health_check():
         logger.error(f"Health check failed: {e}")
         return jsonify({
             'status': 'unhealthy',
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'error': str(e)
         }), 500
 
@@ -83,7 +83,7 @@ memory_usage_percent {memory.percent}
 # TYPE memory_available_bytes gauge
 memory_available_bytes {memory.available}
 """
-        return metrics_text, 200, {'Content-Type': 'text/plain'}
+        return Response(metrics_text, status=200, content_type='text/plain; charset=utf-8')
     except Exception as e:
         logger.error(f"Metrics collection failed: {e}")
-        return "# Metrics collection failed", 500, {'Content-Type': 'text/plain'}
+        return Response("# Metrics collection failed", status=500, content_type='text/plain; charset=utf-8')

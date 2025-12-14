@@ -23,11 +23,11 @@ Complete guide for setting up the Mask Detection System on Windows.
 # 3. Navigate to project directory
 cd path\to\mask_detector
 
-# 4. Run automated setup
-.\deploy-windows.ps1 -Action install
+# 4. Run automated setup (from project root)
+.\scripts\deploy-windows.ps1 -Action install
 
-# 5. Start the application
-.\deploy-windows.ps1 -Action start
+# 5. Start the application (from project root)
+.\scripts\deploy-windows.ps1 -Action start
 ```
 
 ### Option 2: Manual Setup
@@ -50,9 +50,9 @@ python serve.py
 
 ### Option 3: Batch Files (Easiest)
 ```cmd
-# 1. Double-click install.bat
-# 2. Double-click run-dev.bat (development)
-# OR double-click run-prod.bat (production)
+# 1. Double-click scripts\install.bat
+# 2. Double-click scripts\run-dev.bat (development)
+# OR double-click scripts\run-prod.bat (production)
 ```
 
 ## 🔧 Configuration
@@ -81,31 +81,31 @@ CONNECTION_LIMIT=1000
 ### Development Mode
 ```cmd
 # Method 1: Batch file
-run-dev.bat
+scripts\run-dev.bat
 
 # Method 2: Python script
 python run.py
 
 # Method 3: PowerShell
-.\deploy-windows.ps1 -Action start -Environment development
+.\scripts\deploy-windows.ps1 -Action start -Environment development
 ```
 
 ### Production Mode
 ```cmd
 # Method 1: Batch file
-run-prod.bat
+scripts\run-prod.bat
 
 # Method 2: Python script
 python serve.py
 
 # Method 3: PowerShell
-.\deploy-windows.ps1 -Action start -Environment production
+.\scripts\deploy-windows.ps1 -Action start -Environment production
 ```
 
 ### Windows Service
 ```powershell
 # Install service (run as Administrator)
-.\deploy-windows.ps1 -Action service
+.\scripts\deploy-windows.ps1 -Action service
 
 # Start service
 net start MaskDetectionService
