@@ -5,17 +5,11 @@ services:
     plan: starter  # Free tier available
     buildCommand: |
       pip install --upgrade pip
-      pip install -r requirements-render.txt
-    startCommand: python serve.py
+      pip install -r requirements.txt
+    startCommand: python start.py
     envVars:
       - key: FLASK_CONFIG
         value: production
-      - key: HOST
-        value: 0.0.0.0
-      - key: PORT
-        value: 10000
-      - key: THREADS
-        value: 4
       - key: SECRET_KEY
         generateValue: true
     healthCheckPath: /api/v1/health

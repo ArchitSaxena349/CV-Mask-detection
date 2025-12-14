@@ -37,6 +37,12 @@ class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
     SECRET_KEY = os.environ.get('SECRET_KEY') or Config.SECRET_KEY
+    
+    # Render-specific settings
+    if os.environ.get('RENDER'):
+        # Running on Render
+        HOST = '0.0.0.0'
+        PORT = int(os.environ.get('PORT', 10000))
 
 class TestingConfig(Config):
     """Testing configuration"""

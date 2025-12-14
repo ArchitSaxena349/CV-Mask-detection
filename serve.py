@@ -9,15 +9,16 @@ from app import create_app
 
 def main():
     """Run the production server"""
-    # Get configuration
-    config_name = os.environ.get('FLASK_CONFIG', 'production')
+    # Force production configuration for Render
+    config_name = 'production'
+    os.environ['FLASK_CONFIG'] = 'production'
     
     # Create app with full features
     app = create_app(config_name)
     
-    # Server configuration for Render
-    host = os.environ.get('HOST', '0.0.0.0')
-    port = int(os.environ.get('PORT', 10000))  # Render default
+    # Server configuration for Render (must bind to 0.0.0.0)
+    host = '0.0.0.0'  # Force bind to all interfaces
+    port = int(os.environ.get('PORT', 10000))  # Render provides PORT
     threads = int(os.environ.get('THREADS', 4))
     
     print(f"🎭 Starting Mask Detection Production Server on Render...")
