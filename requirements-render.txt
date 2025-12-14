@@ -3,7 +3,7 @@ Flask==3.1.1
 Flask-WTF==1.2.2
 WTForms==3.2.1
 opencv-contrib-python-headless==4.10.0.84
-tensorflow-cpu>=2.16.0,<2.21.0
+tensorflow-cpu==2.20.0   # use your exact version here
 numpy>=1.24.0,<2.0.0
 Pillow>=10.0.0
 imutils>=0.5.4
