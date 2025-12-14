@@ -35,6 +35,7 @@ FROM python:3.11-slim as production
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     FLASK_CONFIG=production \
+    PORT=8000 \
     PATH="/opt/venv/bin:$PATH"
 
 # Install runtime dependencies
