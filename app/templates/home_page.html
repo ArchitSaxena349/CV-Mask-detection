@@ -15,6 +15,31 @@
                      class="img-thumbnail img-fluid mx-auto d-block">
             </div>
         </div>
+        <div class="row mt-3 mb-3">
+            <div class="col-12">
+                <div class="card p-3">
+                    <h5 class="mb-3">Source Selection</h5>
+                    <div class="form-row">
+                        <div class="col-md-3 mb-2">
+                            <label for="sourceSelect">Source</label>
+                            <select id="sourceSelect" class="form-control">
+                                <option value="camera" selected>Camera</option>
+                                <option value="video">Video File</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label for="cameraIndex">Camera Index</label>
+                            <input id="cameraIndex" type="number" min="0" value="0" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="videoPath">Video Path</label>
+                            <input id="videoPath" type="text" placeholder="C:\\path\\to\\video.mp4" class="form-control">
+                        </div>
+                    </div>
+                    <small class="text-muted">Pick camera or provide a local video file path.</small>
+                </div>
+            </div>
+        </div>
         <div class="row mt-3 mb-5">
             <div class="col-6 d-flex justify-content-end">
                 <button id="start" onclick="start()" class="btn btn-outline-success"><i class="fa fa-video-camera"
@@ -53,9 +78,20 @@ $(document).ready(function(){
         $("#start").attr("class","btn btn-outline-success");
     }
     function start(){
-        $("img").attr("src", "{{url_for('main.video_feed')}}");
-        $("#start").attr("class","btn btn-success active");
+        var source = $("#sourceSelect").val();
+        var cameraIndex = $("#cameraIndex").val();
+        var videoPath = $("#videoPath").val();
+        var baseUrl = "{{url_for('main.video_feed')}}";
 
+        var url = baseUrl + "?source=" + encodeURIComponent(source);
+        if (source === "camera") {
+            url += "&camera_index=" + encodeURIComponent(cameraIndex);
+        } else if (source === "video" && videoPath) {
+            url += "&path=" + encodeURIComponent(videoPath);
+        }
+
+        $("img").attr("src", url);
+        $("#start").attr("class","btn btn-success active");
         $("#stop").attr("class","btn btn-outline-danger");
     }
 

@@ -96,7 +96,27 @@ export SECRET_KEY=your-secret-key
 - `GET /` - Home page with live detection
 - `GET /image-mask-detector` - Image upload interface
 - `POST /image-processing` - Process uploaded images
-- `GET /video_feed` - Real-time video stream
+- `GET /video_feed` - Real-time video stream (MJPEG)
+  - Query params:
+    - `source`: `camera` (default) or `video`
+    - `camera_index`: integer camera index (default `0`)
+    - `path`: local video file path when `source=video`
+  - Examples:
+    - Camera: `http://127.0.0.1:5000/video_feed?source=camera&camera_index=0`
+    - Video file: `http://127.0.0.1:5000/video_feed?source=video&path=C:\\videos\\sample.mp4`
+  - Behavior:
+    - If the selected source cannot be opened, an error frame is streamed once and logged.
+
+### Confidence & Edge Cases
+- Each face shows `Mask`, `No mask`, or `Improper` with confidence.
+- `Improper` indicates ambiguous detection (e.g., partial mask or improper wear). Colored orange.
+
+### Testing
+- Run tests:
+  ```bash
+  pytest -q
+  ```
+- Includes health endpoints, metrics, video feed fallback, and classification decoding.
 
 ## 🔧 Development
 
