@@ -19,7 +19,7 @@ class Config:
     VERSION = "1.0.0"
     
     # Model settings
-    MODEL_PATH = BASE_DIR / "models" / "mask_mobilenet.h5"
+    MODEL_PATH = Path("models/mask_mobilenet_v2_compat.h5")
     
     # Upload settings
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
